@@ -1,7 +1,6 @@
 <template>
   <div>
   <headerr  v-on:addProduct="addProductParent"/>
-
   <v-card class="makeBorder"> 
     <v-table
     fixed-header
@@ -54,7 +53,6 @@
   </v-table>
   </v-card>
 
-
   <v-card class="bottom"> 
     <v-row no-gutters>
       <v-col
@@ -93,10 +91,17 @@
 
 <script>
 import Headerr from './Headerr.vue';
-import axios from 'axios'
+import axios from 'axios';
 export default {
   components: { Headerr },
     name: 'sidebar-vue',
+    // props: {
+    //   test1: {
+    //   type: Function,
+    //   default() {
+    //     return {}
+    //   }}
+    // },
     data: () => ({
       width: 300,
       aspectRatio: 16 / 9,
@@ -118,22 +123,20 @@ export default {
       total: 0,
 
     }),
+    props: ["paymentDone"],
     methods: {
-      async getProduct(id) {
-        try {
-          const res = await axios.get(
-          `http://127.0.0.1:8000/product/${id}`
-        ) 
-          res.data.quantity = 1;
-          this.products.push(res.data);
-          console.log(res.data)
-        } catch (error) {
-          console.log(error)
-        }
+      getProduct(id) {
+        axios.get(`http://127.0.0.1:8000/products/${id}`)
+        .then(response => {
+          response.data.quantity = 1;
+          this.products.push(response.data);
+        })
+        .catch(e => {
+          console.log(e);        
+        })
       },
-
       addProductToList(id) {
-        for (let i = 0; i < this.products.length; i++) {
+        for (let i in this.products) {
           if(this.products[i].id == id) { 
             let temp = this.products[i].price / this.products[i].quantity;
             this.products[i].quantity += 1;
@@ -143,7 +146,7 @@ export default {
       },
 
       rmProductToList(id) {
-        for (let i = 0; i < this.products.length; i++) {
+        for (let i in this.products) {
           if (this.products[i].id == id) {
             if(this.products[i].quantity <= 1) { this.products = this.products.filter(item =>  item.id != id ) }
             else {
@@ -157,62 +160,64 @@ export default {
 
       totalPrice() {
         this.total = 0;
-        for (let i = 0; i < this.products.length; i++) {
+        for (let i in this.products) {
             this.total += this.products[i].price;
         }
       },
 
-      // checkProduct(arr ,id) {
-      //   for(let i = 0; i < arr.length; i++) {
-      //     if (arr[i].id == id) return true;
-      //     else {
-      //       return false;
-      //       }
-      //   }
-      // },
-
       addProductParent(productId) {
-
         if (this.products.length <= 0) {
           this.getProduct(productId);
         } else {
           let checked = false; // check xem phan tu co trong mang hay chua
-          for (let i = 0; i < this.products.length; i++) {
+          for (let i in this.products) {
             if (this.products[i].id == productId) {
               checked=true;
             }
           }
 
-
-          if(checked == true) { // neu da co trong mang ==> tim va tang so luong
-            for (let i = 0; i < this.products.length; i++) {
-              if(this.products[i].id == productId) {
-              let temp = this.products[i].price / this.products[i].quantity;
-              this.products[i].quantity += 1;
-              this.products[i].price = this.products[i].quantity * temp;
-              this.totalPrice();
-              }
+        if(checked == true) { // neu da co trong mang ==> tim va tang so luong
+          for (let i in this.products) {
+            if(this.products[i].id == productId) {
+            let temp = this.products[i].price / this.products[i].quantity;
+            this.products[i].quantity += 1;
+            this.products[i].price = this.products[i].quantity * temp;
+            this.totalPrice();
             }
+          }
           } else {
-            this.getProduct(productId);
-            }
+          this.getProduct(productId);
+          }
         }
-      
+      },
+
+      passDataToOrder() {
+        this.$emit('toOrder', this.products, this.total);
       }
 
-
     }, 
-    computed: {
+  computed: {
     productsLength() {
       return this.products.length
-    }
+    },
+
   },
   watch: {
     productsLength () {
       this.totalPrice();
+    },
+    total() {
+      this.passDataToOrder();
+    },
+    paymentDone() {
+      if(this.paymentDone) {
+        console.log(this.paymentDone);
+        this.products = [];
+        this.total = 0;
+      }
     }
   }
-    }
+}
 
 </script>
 

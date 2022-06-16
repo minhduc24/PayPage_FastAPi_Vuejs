@@ -56,8 +56,9 @@
             class="pa-5 pay-btn "
             height="60"  
             width="200"
+            @click="sendPaymentName"
           >
-            <p style="font-size: 20px">  Thanh Toán  </p>
+            <p style="font-size: 20px" > Thanh Toán </p>
           </v-btn>
         </v-col>
       </v-row>
@@ -96,16 +97,23 @@ export default {
           state: false,
         },
       ],
+      paymentName: ''
       
     }),
     methods: {
       getPayMethod(id) {
         if(this.payMethods[id - 1].state == false) {
           this.payMethods[id - 1].state = true;
-          for (let i = 0; i < this.payMethods.length; i++) {
+          for (let i in this.payMethods) {
             if(i != (id - 1)) this.payMethods[i].state = false;
           }
         }
+        this.paymentName = this.payMethods[id-1].name;
+      },
+      sendPaymentName(event) {
+         event.preventDefault();
+        this.$emit('paymentName', this.paymentName);
+        
       }
     }
 

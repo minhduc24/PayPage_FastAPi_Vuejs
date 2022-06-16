@@ -1,5 +1,6 @@
 <template>
-  <v-app-bar app dark color="blue">
+<div>
+    <v-app-bar app dark color="blue">
       <v-toolbar-title>Login Page</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn text rounded>
@@ -44,6 +45,7 @@
       </v-card>
 
       
+</div>
     
 </template>
 
@@ -62,7 +64,7 @@
       async getUser() {
         try {
           const res = await axios.get(
-            `http://127.0.0.1:8000/user/${this.userId}`
+            `http://127.0.0.1:8000/users/${this.userId}`
           )
           this.user = res.data;
         } catch (error) {
@@ -70,12 +72,24 @@
         }
         
         if(this.user != null) {
+          console.log('1111');
           this.check2 = true;
+          window.location.href = '/';
         } else {
           this.check1 = true;
         }
         }
+      },
+      mounted() {
+        if (localStorage.user) {
+        this.user = JSON.parse(localStorage.user);
+    }
+  },
+    watch: {
+      user(newName) {
+        localStorage.user = JSON.stringify(newName);
       }
+  }
     }
   
 </script>

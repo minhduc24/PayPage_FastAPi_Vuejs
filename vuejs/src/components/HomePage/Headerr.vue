@@ -28,17 +28,16 @@
           justify="end"
           class="mt-1"
           >
-        <v-menu        >
+        <v-menu  v-if="check != false">
         <template v-slot:activator="{ props }">
           <v-btn
             icon
             v-bind="props"
           >
           <v-avatar
-            color="brown"
             size="large"
           >
-          <v-img :src=user.img></v-img>
+          <v-img :src="check.user_img"></v-img>
           </v-avatar>
           </v-btn>
         </template >
@@ -46,9 +45,47 @@
           <v-card-text>
             <div class="mx-auto text-center">
               <v-avatar
-                color="brown"
+                size="large"
               >
-              <v-img :src=user.img></v-img>
+              <v-img :src='check.user_img'></v-img>
+              </v-avatar>
+              <h3>{{ check.user_name }}</h3>
+              <p class="text-caption mt-1">
+                {{ check.accumulate_points }}
+              </p>
+              <v-divider class="my-3"></v-divider>
+              <v-btn
+                rounded
+                variant="text"
+              > 
+                <router-link to="/" @click="resetUser">
+                Logout
+                </router-link>
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+      <v-menu v-if="check == false">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+          >
+          <v-avatar
+            size="large"
+          >
+          <v-img :src="user.img"></v-img>
+          </v-avatar>
+          </v-btn>
+        </template >
+        <v-card class="test">
+          <v-card-text>
+            <div class="mx-auto text-center">
+              <v-avatar
+                size="large"
+              >
+              <v-img :src='user.img'></v-img>
               </v-avatar>
               <h3>{{ user.name }}</h3>
               <p class="text-caption mt-1">
@@ -86,15 +123,21 @@ export default {
         accumulate_points: '',
       },
       productId: '',
+      check: localStorage.user ? JSON.parse(localStorage.user) : false,
 
     }),
     methods: {
       addProduct(event) {
         event.preventDefault();
         this.$emit('addProduct', this.productId);
-        console.log('aaa');
+        this.productId = '';
+      },
+      resetUser() {
+        this.check = false;
+        localStorage.clear();
       }
-    }
+    },
+    
 }
 </script>
 
@@ -105,8 +148,8 @@ export default {
 
 .test {
   position: relative;
-  top: 5px;
-  right: 125px;
+  top: 2px;
+  right: 74px;
 }
 
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from db.database import engine
 from db.base import Base
-from routes import users, products
+from routes import users, products, order
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()   
@@ -26,6 +26,7 @@ def create_tables():
 def define_route():
     app.include_router(users.router)
     app.include_router(products.router)
+    app.include_router(order.router)
 
 
 
