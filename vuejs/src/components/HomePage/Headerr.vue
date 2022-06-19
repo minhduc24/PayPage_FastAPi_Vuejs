@@ -58,7 +58,7 @@
                 rounded
                 variant="text"
               > 
-                <router-link to="/" @click="resetUser">
+                <router-link to="/account" @click="resetUser">
                 Logout
                 </router-link>
               </v-btn>

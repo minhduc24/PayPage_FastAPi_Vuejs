@@ -95,13 +95,6 @@ import axios from 'axios';
 export default {
   components: { Headerr },
     name: 'sidebar-vue',
-    // props: {
-    //   test1: {
-    //   type: Function,
-    //   default() {
-    //     return {}
-    //   }}
-    // },
     data: () => ({
       width: 300,
       aspectRatio: 16 / 9,
@@ -169,14 +162,14 @@ export default {
         if (this.products.length <= 0) {
           this.getProduct(productId);
         } else {
-          let checked = false; // check xem phan tu co trong mang hay chua
+          let checked = false; 
           for (let i in this.products) {
             if (this.products[i].id == productId) {
               checked=true;
             }
           }
 
-        if(checked == true) { // neu da co trong mang ==> tim va tang so luong
+        if(checked == true) { 
           for (let i in this.products) {
             if(this.products[i].id == productId) {
             let temp = this.products[i].price / this.products[i].quantity;
@@ -192,6 +185,10 @@ export default {
       },
 
       passDataToOrder() {
+        // let user = JSON.parse(localStorage.user);
+        // if(user.accumulate_points >= 1000000) {
+        //   this.total = this.total - Math.round((this.total*0.1));
+        // }
         this.$emit('toOrder', this.products, this.total);
       }
 
@@ -211,7 +208,6 @@ export default {
     },
     paymentDone() {
       if(this.paymentDone) {
-        console.log(this.paymentDone);
         this.products = [];
         this.total = 0;
       }

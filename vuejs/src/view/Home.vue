@@ -37,12 +37,16 @@ export default {
     createOrder(products, totalPrice) {
       this.products = products;
       this.totalPrice = totalPrice;
-      console.log(this.products, this.totalPrice);
     },
     getPaymentName(name) {
+
+      let user = JSON.parse(localStorage.user);
+      user.accumulate_points += this.totalPrice;
+      this.totalPrice = user.accumulate_points;
+      localStorage.user = JSON.stringify(user)
+
+      let user_id = user.id;
       this.paymentName = name;
-      let user_id = JSON.parse(localStorage.user).id;
-      console.log(user_id);
       const orderDetails = this.products.map(product => {
         return {
           product_id: product.id,
@@ -50,7 +54,6 @@ export default {
           total_price: this.totalPrice,
         }
       });
-      console.log(orderDetails);
         axios.post(`http://127.0.0.1:8000/orders`, {
           user_id: user_id,
           order_details: orderDetails
@@ -59,7 +62,7 @@ export default {
           response.data;
           this.paymentDone = true;
           alert("thanh toan thanh cong");
-          
+          location.reload();
         })
         .catch(e => {
           console.log(e);        
